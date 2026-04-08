@@ -64,7 +64,7 @@
         }
 
         .title-area h1 {
-            font-size: 2.2rem;
+            font-size: 2rem;
             letter-spacing: -0.5px;
             color: #5b6e5e;
             text-shadow: 2px 2px 0 rgba(164, 184, 172, 0.3);
@@ -295,6 +295,8 @@
             font-weight: 500;
         }
 
+        .letter-container.show-letter { max-height: 900px; overflow-y: auto; }
+
         @media (max-width: 500px) {
             .garden-container {
                 padding: 1.2rem;
@@ -313,8 +315,8 @@
 
 <div class="garden-container">
     <div class="title-area">
-        <h1>🍃 Tea Garden 🍃</h1>
-        <p>a birthday bloom • a tender wish</p>
+        <h1>🍃 Happy Birthday Vinuu 🍃</h1>
+        <p>Happy Adulthood!</p>
     </div>
 
     <!-- Envelope interactive zone -->
@@ -322,7 +324,7 @@
         <div class="envelope" id="envelope">
             <div class="flap closed-flap" id="envelopeFlap"></div>
             <div class="envelope-body">
-                ✉️
+                
                 <div class="stamp">🌱</div>
             </div>
         </div>
@@ -333,16 +335,19 @@
     <div class="letter-container" id="letterContainer">
         <div class="birthday-letter">
             <h2>🎂 Happy Birthday! 🎈</h2>
-            <div class="greeting">Dearest Tea Garden Friend,</div>
+            <div class="greeting">Dearest Loml <3,</div>
             <div class="message-body">
-                <p>On this special day, may your heart be as warm as a cup of golden brew, and your spirit as fresh as morning dew on tender tea leaves.</p>
-                <p>I've tucked this letter inside a little envelope — a garden of memories, steeped in kindness and the gentle hues of <strong style="color:#A4B8AC;">sage</strong>, <strong style="color:#ECB7B3;">peach</strong> and <strong style="color:#8E929B;">misty stone</strong>.</p>
+                <p>You turn 18 today Vinuu! Congratulations! You are finally stepping into the world as a young adult. I know it sounds scary and cliche but it is a part of the life we all gotta encounter. So cheers to this day and Wishing you all the best! 🥂</p>
+                <p>28th January 2025, The sophisticated bold junior I met so randomly that I couldn't have imagined would hold such an important chapter and give so much meaning to my life just by being there.</p>
+                <p>It’s been a whole year of us Vini, and honestly, every moment has meant more to me than I can put into words. I don’t know what the future has planned for us, and maybe we don’t need to have all the answers right now but what I do know is that what we have is real, special, and something I deeply cherish.</p>
+                <p>Being with you has taught me so much about love, patience, and what it means to truly care for someone. You make my days brighter just by being in them, and even on the toughest days, you somehow make things feel lighter. I admire who you are, the way you think, the way you love, and the little things that make you <b>You.</b> </p>
+                <p> You’ve brought so much happiness, warmth, and meaning into my life, and I’m grateful for every laugh, every conversation, and even the quiet moments we share. No matter where life takes us, this journey with you will always be something I hold close to my heart. I hope this year brings you all the love and happiness you deserve. You truly deserve the world.</p>
                 <p>🎉 May laughter fill your hours, may dreams unfold like petals, and may the coming year bring you everything your soul desires. You deserve the whole world, wrapped in ribbons of joy!</p>
                 <p>✨ <em>Keep blooming, keep growing, keep steeping life with wonder.</em> ✨</p>
             </div>
             <div class="signature">
-                With love & birthday magic, <br>
-                <span>— your secret garden admirer 🌿</span>
+                To the Ember to My Wade, <br>
+                <span>— your secret(not so secret) admirer 🌿</span>
             </div>
         </div>
     </div>
@@ -382,7 +387,7 @@
         isOpened = true;
         
         // change hint text to let user know they can reset
-        hintText.innerHTML = '🎁 the letter is open — tap "close & reset" to seal again 🎁';
+        hintText.innerHTML = '🎁 the letter is open! tap "close & reset" to seal again 🎁';
         
         // optional: tiny haptic or just playful style
         envelope.style.transform = 'scale(1.02)';

@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Birthday Wish | Tea Garden Envelope</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none; /* prevents accidental text selection while tapping */
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #F4DDD5 0%, #ECB7B3 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'Roboto', 'Georgia', 'Times New Roman', serif;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        /* subtle tea garden botanical accent */
+        body::before {
+            content: "🍃";
+            font-size: 90px;
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            opacity: 0.2;
+            transform: rotate(-15deg);
+            pointer-events: none;
+        }
+
+        body::after {
+            content: "🌿";
+            font-size: 80px;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            opacity: 0.2;
+            transform: rotate(10deg);
+            pointer-events: none;
+        }
+
+        /* main card container */
+        .garden-container {
+            max-width: 600px;
+            width: 100%;
+            background: #DCE1DA;  /* soft sage background from scheme */
+            border-radius: 48px 48px 56px 56px;
+            box-shadow: 0 25px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(142, 146, 155, 0.2);
+            padding: 1.8rem 1.8rem 2.2rem;
+            transition: all 0.2s ease;
+        }
+
+        /* title / tea garden mood */
+        .title-area {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .title-area h1 {
+            font-size: 2.2rem;
+            letter-spacing: -0.5px;
+            color: #5b6e5e;
+            text-shadow: 2px 2px 0 rgba(164, 184, 172, 0.3);
+            background: #F4DDD5;
+            display: inline-block;
+            padding: 0.2rem 1.4rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-family: 'Georgia', 'Times New Roman', serif;
+        }
+
+        .title-area p {
+            color: #6e7a6b;
+            margin-top: 0.5rem;
+            font-style: italic;
+            font-weight: 500;
+        }
+
+        /* envelope wrapper: interactive tap zone */
+        .envelope-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 1rem 0 1.2rem;
+            cursor: pointer;
+        }
+
+        /* envelope main styling */
+        .envelope {
+            position: relative;
+            width: 280px;
+            height: 180px;
+            background: #8E929B;   /* base greyish tone from scheme */
+            border-radius: 12px 12px 8px 8px;
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            cursor: pointer;
+        }
+
+        .envelope:active {
+            transform: scale(0.97);
+        }
+
+        /* envelope flap (closed state) */
+        .flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 0;
+            background: #ECB7B3;   /* warm peach tone from scheme */
+            border-radius: 12px 12px 0 0;
+            transition: all 0.5s ease-in-out;
+            z-index: 5;
+            transform-origin: top;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* closed flap triangle look (folded) */
+        .envelope .flap.closed-flap {
+            height: 50%;
+            clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+            background: #ECB7B3;
+            border-radius: 12px 12px 0 0;
+        }
+
+        /* open flap: moves upward and disappears */
+        .envelope .flap.open-flap {
+            height: 0%;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* envelope body details: subtle line & stamp */
+        .envelope-body {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70%;
+            background: #A4B8AC;   /* muted sage green */
+            border-radius: 0 0 12px 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.4rem;
+            font-weight: bold;
+            color: #F4DDD5;
+            text-shadow: 1px 1px 0 #6e7a6b;
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.1);
+        }
+
+        /* fake stamp detail */
+        .stamp {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 38px;
+            height: 42px;
+            background: #DCE1DA;
+            border-radius: 4px;
+            opacity: 0.7;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #8E929B;
+            box-shadow: inset 0 0 0 1px #b3b9ae;
+            pointer-events: none;
+        }
+
+        /* letter container - hidden by default, appears after open */
+        .letter-container {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1), opacity 0.5s ease, margin 0.3s;
+            background: #F4DDD5;
+            border-radius: 32px;
+            margin-top: 0;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .letter-container.show-letter {
+            max-height: 650px;      /* enough for letter content */
+            opacity: 1;
+            margin-top: 1.8rem;
+            padding: 0.1rem 0 0.1rem 0;
+        }
+
+        /* the actual letter content */
+        .birthday-letter {
+            background: #FDF8F2;
+            padding: 1.8rem 1.6rem;
+            border-radius: 28px;
+            margin: 1rem;
+            border: 1px solid #ECB7B3;
+            box-shadow: inset 0 0 0 2px white, 0 5px 12px rgba(0,0,0,0.05);
+            font-family: 'Segoe UI', 'Georgia', serif;
+        }
+
+        .birthday-letter h2 {
+            color: #7A5C58;
+            font-size: 1.8rem;
+            border-left: 6px solid #ECB7B3;
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .birthday-letter .greeting {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #4f5e4b;
+            margin-bottom: 0.8rem;
+        }
+
+        .birthday-letter .message-body {
+            color: #2e3b2c;
+            line-height: 1.5;
+            font-size: 1rem;
+            margin: 1rem 0;
+        }
+
+        .birthday-letter .message-body p {
+            margin-bottom: 0.8rem;
+        }
+
+        .signature {
+            margin-top: 1rem;
+            text-align: right;
+            font-style: italic;
+            font-weight: 500;
+            color: #8E929B;
+            border-top: 1px dashed #ECB7B3;
+            padding-top: 0.8rem;
+        }
+
+        .signature span {
+            font-family: cursive;
+            font-size: 1.2rem;
+            color: #A7685C;
+        }
+
+        /* cute tea garden extras */
+        .leaf-icon {
+            font-size: 1.2rem;
+            vertical-align: middle;
+        }
+
+        button.reset-btn {
+            background: #DCE1DA;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #5a6d57;
+            margin-top: 1rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        button.reset-btn:hover {
+            background: #ECB7B3;
+            color: #3b3f3a;
+            transform: scale(0.97);
+        }
+
+        .footer-note {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 0.5rem;
+        }
+
+        /* tap hint */
+        .tap-hint {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #7a8b76;
+            margin-top: 0.6rem;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        @media (max-width: 500px) {
+            .garden-container {
+                padding: 1.2rem;
+            }
+            .envelope {
+                width: 240px;
+                height: 160px;
+            }
+            .birthday-letter {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="garden-container">
+    <div class="title-area">
+        <h1>🍃 Tea Garden 🍃</h1>
+        <p>a birthday bloom • a tender wish</p>
+    </div>
+
+    <!-- Envelope interactive zone -->
+    <div class="envelope-wrapper" id="envelopeTapZone">
+        <div class="envelope" id="envelope">
+            <div class="flap closed-flap" id="envelopeFlap"></div>
+            <div class="envelope-body">
+                ✉️
+                <div class="stamp">🌱</div>
+            </div>
+        </div>
+    </div>
+    <div class="tap-hint" id="hintText">🌸 tap the envelope to open birthday letter 🌸</div>
+
+    <!-- Letter container (hidden until open) -->
+    <div class="letter-container" id="letterContainer">
+        <div class="birthday-letter">
+            <h2>🎂 Happy Birthday! 🎈</h2>
+            <div class="greeting">Dearest Tea Garden Friend,</div>
+            <div class="message-body">
+                <p>On this special day, may your heart be as warm as a cup of golden brew, and your spirit as fresh as morning dew on tender tea leaves.</p>
+                <p>I've tucked this letter inside a little envelope — a garden of memories, steeped in kindness and the gentle hues of <strong style="color:#A4B8AC;">sage</strong>, <strong style="color:#ECB7B3;">peach</strong> and <strong style="color:#8E929B;">misty stone</strong>.</p>
+                <p>🎉 May laughter fill your hours, may dreams unfold like petals, and may the coming year bring you everything your soul desires. You deserve the whole world, wrapped in ribbons of joy!</p>
+                <p>✨ <em>Keep blooming, keep growing, keep steeping life with wonder.</em> ✨</p>
+            </div>
+            <div class="signature">
+                With love & birthday magic, <br>
+                <span>— your secret garden admirer 🌿</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        <button class="reset-btn" id="resetEnvelopeBtn">🍵 Close & Reset Envelope</button>
+    </div>
+</div>
+
+<script>
+    // DOM elements
+    const envelope = document.getElementById('envelope');
+    const flap = document.getElementById('envelopeFlap');
+    const letterContainer = document.getElementById('letterContainer');
+    const resetBtn = document.getElementById('resetEnvelopeBtn');
+    const hintText = document.getElementById('hintText');
+
+    // state flag: is envelope opened?
+    let isOpened = false;
+
+    // Function to open envelope with animation and display letter
+    function openEnvelope() {
+        if (isOpened) return; // already open
+
+        // change flap style to "open" (hidden)
+        flap.classList.remove('closed-flap');
+        flap.classList.add('open-flap');
+        // style adjustments to ensure smooth transition
+        flap.style.height = '0%';
+        flap.style.opacity = '0';
+        flap.style.visibility = 'hidden';
+        
+        // show letter container with transition
+        letterContainer.classList.add('show-letter');
+        
+        // update state
+        isOpened = true;
+        
+        // change hint text to let user know they can reset
+        hintText.innerHTML = '🎁 the letter is open — tap "close & reset" to seal again 🎁';
+        
+        // optional: tiny haptic or just playful style
+        envelope.style.transform = 'scale(1.02)';
+        setTimeout(() => {
+            envelope.style.transform = '';
+        }, 180);
+    }
+
+    // Function to close & reset envelope (seal letter back)
+    function resetEnvelope() {
+        if (!isOpened) return; // if already closed, nothing to reset but can still reset style
+
+        // hide letter container with smooth transition
+        letterContainer.classList.remove('show-letter');
+        
+        // reset flap: change back to closed-flap appearance
+        flap.classList.remove('open-flap');
+        flap.classList.add('closed-flap');
+        // reset inline styles that were manipulated
+        flap.style.height = '';
+        flap.style.opacity = '';
+        flap.style.visibility = '';
+        
+        // ensure envelope flap geometry is correct after reset
+        // force reflow for consistent closure
+        void flap.offsetHeight;
+        
+        // update state
+        isOpened = false;
+        
+        // reset hint text to original friendly message
+        hintText.innerHTML = '🌸 tap the envelope to open birthday letter 🌸';
+        
+        // subtle animation on envelope to show it's closed again
+        envelope.style.transform = 'scale(0.98)';
+        setTimeout(() => {
+            envelope.style.transform = '';
+        }, 150);
+    }
+
+    // event handler for envelope tap (touch or click)
+    function onEnvelopeTap(e) {
+        e.stopPropagation();
+        if (!isOpened) {
+            openEnvelope();
+        } else {
+            // If already opened, maybe we do nothing (but reset button is available)
+            // but we can add a little vibration effect or just a friendly reminder.
+            // for better UX: give a tiny wiggle to indicate use reset button.
+            envelope.style.animation = 'shake 0.3s ease-in-out 0s 1';
+            setTimeout(() => {
+                envelope.style.animation = '';
+            }, 300);
+            // subtle hint to reset
+            hintText.innerHTML = '✨ envelope already open — click "Close & Reset" to seal again ✨';
+            setTimeout(() => {
+                if (isOpened) hintText.innerHTML = '🎁 the letter is open — tap "close & reset" to seal again 🎁';
+            }, 1500);
+        }
+    }
+
+    // add keyframe shake animation dynamically (optional)
+    const styleSheet = document.createElement("style");
+    styleSheet.textContent = `
+        @keyframes shake {
+            0% { transform: translateX(0px); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+            100% { transform: translateX(0px); }
+        }
+        .envelope {
+            transition: transform 0.2s ease, box-shadow 0.2s;
+        }
+        .flap {
+            transition: all 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .letter-container {
+            transition: max-height 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1), opacity 0.5s ease, margin 0.3s, padding 0.2s;
+        }
+    `;
+    document.head.appendChild(styleSheet);
+
+    // Attach event listeners (both click and touch for mobile)
+    const envelopeWrapper = document.getElementById('envelopeTapZone');
+    envelopeWrapper.addEventListener('click', onEnvelopeTap);
+    // for touch devices ensure no double triggering but it's fine
+    envelopeWrapper.addEventListener('touchstart', (e) => {
+        // just to ensure mobile response, prevent ghost click but we want to trigger
+        // we call same handler, but prevent default if needed? not needed.
+        e.preventDefault();
+        onEnvelopeTap(e);
+    }, { passive: false });
+
+    // Reset button event: fully seal letter and reset envelope state
+    resetBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        resetEnvelope();
+    });
+    
+    // optional: if someone clicks on letter container don't affect envelope state
+    letterContainer.addEventListener('click', (e) => e.stopPropagation());
+    
+    // also on window load, ensure proper initial closed state without glitches
+    window.addEventListener('load', () => {
+        // assure that flap is properly in closed state
+        flap.classList.add('closed-flap');
+        flap.classList.remove('open-flap');
+        flap.style.height = '';
+        flap.style.opacity = '';
+        flap.style.visibility = '';
+        isOpened = false;
+        letterContainer.classList.remove('show-letter');
+        hintText.innerHTML = '🌸 tap the envelope to open birthday letter 🌸';
+        // additional style consistency: background envelope body visible
+    });
+    
+    // if any browsers have issues with clip-path + height transition, we pre-check
+    // but modern browsers handle it perfectly. We also ensure envelope flap dimensions
+    // are correct when closed: the closed-flap class gives it a 50% height with clip-path triangle.
+    // for extra reliability, we adjust some styling via class 
+    const adjustFlap = () => {
+        if (!isOpened) {
+            flap.classList.add('closed-flap');
+            flap.classList.remove('open-flap');
+            flap.style.height = '';
+        } else {
+            flap.classList.remove('closed-flap');
+            flap.classList.add('open-flap');
+            flap.style.height = '0%';
+            flap.style.opacity = '0';
+            flap.style.visibility = 'hidden';
+        }
+    };
+    
+    // fix for any orientation change etc
+    window.addEventListener('resize', () => {
+        if (!isOpened) {
+            flap.classList.add('closed-flap');
+            flap.classList.remove('open-flap');
+        } else {
+            flap.classList.remove('closed-flap');
+            flap.classList.add('open-flap');
+            flap.style.height = '0%';
+            flap.style.opacity = '0';
+            flap.style.visibility = 'hidden';
+        }
+    });
+</script>
+</body>
+</html>
